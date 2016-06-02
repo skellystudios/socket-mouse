@@ -17,7 +17,42 @@ app.use(express.static(__dirname + '/public'));
 var numUsers = 0;
 
 io.on('connection', function (socket) {
+  socket.center = 0;
   var addedUser = false;
+
+
+  // when the client emits 'stop typing', we broadcast it to others
+  socket.on('position', function (alpha, beta) {
+
+
+    // Adjust alpha relative to the center
+    var centered_alpha = -1 * (alpha - socket.center) + 45;
+    console.log(socket.center, alpha, centered_alpha)
+
+      // Scale to 0-1
+    var adjusted_beta = (beta)/50;
+    var adjusted_alpha = (centered_alpha) / 90
+
+    if (adjusted_alpha < 0) { adjusted_alpha = 0; }
+    if (adjusted_alpha > 1) { adjusted_alpha = 1; }
+
+        console.log(socket.center, alpha, centered_alpha, adjusted_alpha)
+    // console.log(adjusted_alpha, adjusted_beta)
+    socket.broadcast.emit('position', {
+      alpha: adjusted_alpha,
+      beta: adjusted_beta
+    });
+  });
+
+  // when the client emits 'stop typing', we broadcast it to others
+  socket.on('center', function (alpha) {
+    console.log("CENTER - " + alpha)
+    socket.center = alpha;
+  });
+
+
+
+
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function (data) {
@@ -60,14 +95,6 @@ io.on('connection', function (socket) {
     });
   });
 
-  // when the client emits 'stop typing', we broadcast it to others
-  socket.on('position', function (alpha, beta) {
-    console.log("position" + alpha)
-    socket.broadcast.emit('position', {
-      alpha: alpha,
-      beta: beta
-    });
-  });
 
 
   // when the user disconnects.. perform this
