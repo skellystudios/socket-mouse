@@ -1,0 +1,13 @@
+{
+  "name": "socket-mouse",
+  "version": "0.0.0",
+  "description": "Move your mouse using your phone's gyro",
+  "main": "index.js",
+  "author": "Grant Timmerman",
+  "private": true,
+  "license": "BSD",
+  "dependencies": {
+    "express": "4.13.4",
+    "socket.io": "1.3.7"
+  }
+}
