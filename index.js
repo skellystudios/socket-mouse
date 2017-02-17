@@ -25,9 +25,17 @@ io.on('connection', function (socket) {
   socket.on('position', function (alpha, beta) {
 
 
+    // Adjust centre by 45degrees, and correct for the 0 boundary
+    var left_boundary = socket.center - 45
+    if (left_boundary < 0) { left_boundary += 360; }
+
+    // get the alpha relative to this, and adjust for crossing the 0 boundary
+    if ( alpha < left_boundary ) { alpha += 360 }
+
+
     // Adjust alpha relative to the center
-    var centered_alpha = -1 * (alpha - socket.center) + 45;
-    console.log(socket.center, alpha, centered_alpha)
+    var centered_alpha = 90 - (alpha - left_boundary)
+    console.log("Server", socket.center, alpha, centered_alpha)
 
       // Scale to 0-1
     var adjusted_beta = (beta)/50;
